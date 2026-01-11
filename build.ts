@@ -1,5 +1,5 @@
 const results = await Bun.build({
-  entrypoints: ["src/index.ts"],
+  entrypoints: ["src/index.ts", "src/cleanup.ts"],
   outdir: "dist",
   target: "node",
   minify: true,
