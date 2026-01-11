@@ -17,8 +17,12 @@ async function run() {
       core.getInput("infisical-domain") || "https://eu.infisical.com";
     const infisicalEnvSlug = core.getInput("infisical-env-slug") || "dev";
     const folderAppend = core.getInput("folder-append") || "";
-    const createFoldersFlag =
-      core.getBooleanInput("create-folders-flag") || false;
+
+    // Handle optional boolean input - only parse if provided
+    const createFoldersFlagInput = core.getInput("create-folders-flag");
+    const createFoldersFlag = createFoldersFlagInput
+      ? core.getBooleanInput("create-folders-flag")
+      : false;
 
     const inputs: InfisicalActionInputs = {
       infisicalClientId,

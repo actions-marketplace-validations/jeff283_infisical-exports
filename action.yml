@@ -20,6 +20,14 @@ inputs:
     description: "The Slug of the Infisical environment"
     required: false
     default: "dev"
+  folder-append:
+    description: "Optional prefix to prepend to folder paths (empty string uses current directory)"
+    required: false
+    default: ""
+  create-folders-flag:
+    description: "Whether to create folders if they don't exist (true/false)"
+    required: false
+    default: "false"
 
 outputs:
   total-env-files:
