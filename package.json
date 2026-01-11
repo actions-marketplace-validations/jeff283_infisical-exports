@@ -21,9 +21,10 @@
   "type": "module",
   "scripts": {
     "build": "bun run build.ts",
-    "run": "bun run src/index.ts",
-    "watch": "bun run --watch src/index.ts",
-    "dev": "bun run watch"
+    "run:action": "bun run src/index.ts",
+    "run:cleanup": "bun run src/cleanup.ts",
+    "dev:action": "bun run --watch src/index.ts",
+    "dev:cleanup": "bun run --watch src/cleanup.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
