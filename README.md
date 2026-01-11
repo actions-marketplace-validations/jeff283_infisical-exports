@@ -90,7 +90,7 @@ See the repository for license information.
 
 ## Author
 
-Jeff Njoroge (@jeff283)
+Jeff Njoroge [@jeff283](https://github.com/jeff283)
 
 ## Links
 
