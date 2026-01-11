@@ -1,7 +1,6 @@
 import { InfisicalSDK } from "@infisical/sdk";
 import { createFolders } from "@/utils/createFolders";
 import { writeEnvFiles } from "@/utils/writeEnvFiles";
-import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
 
 export interface InfisicalActionInputs {
   // INFISICAL_CLIENT_ID =
@@ -26,7 +25,7 @@ export async function main(inputs: InfisicalActionInputs) {
 
   // Default values
   const folderAppend = inputs.folderAppend || "";
-  const createFoldersFlag = inputs.createFoldersFlag || true;
+  const createFoldersFlag = inputs.createFoldersFlag || false;
 
   // Initialize Infisical client and authenticate
   const client = new InfisicalSDK({
