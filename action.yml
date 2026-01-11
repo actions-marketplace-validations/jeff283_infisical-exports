@@ -2,6 +2,10 @@ name: Infisical Exports
 description: Exports Infisical secrets to environment variables
 author: Jeff Njoroge <jeff283>
 
+branding:
+  icon: "lock"
+  color: "green"
+
 inputs:
   infisical-client-id:
     description: "The Client ID of the Infisical application"
