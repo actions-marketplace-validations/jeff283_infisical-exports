@@ -20,7 +20,9 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "bun run build.ts"
+    "build": "bun run build.ts",
+    "run": "bun run src/index.ts",
+    "watch": "bun run --watch src/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
