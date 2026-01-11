@@ -1,6 +1,7 @@
 import { InfisicalSDK } from "@infisical/sdk";
 import { createFolders } from "@/utils/createFolders";
 import { writeEnvFiles } from "@/utils/writeEnvFiles";
+import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
 
 export interface InfisicalActionInputs {
   // INFISICAL_CLIENT_ID =
@@ -17,11 +18,15 @@ export interface InfisicalActionInputs {
   infisicalProjectId: string;
 
   folderAppend?: string;
+  createFoldersFlag?: boolean;
 }
 
 export async function main(inputs: InfisicalActionInputs) {
-  const folderAppend = inputs.folderAppend || "mock-folder";
   const startTime = Date.now();
+
+  // Default values
+  const folderAppend = inputs.folderAppend || "mock-folder";
+  const createFoldersFlag = inputs.createFoldersFlag || false;
 
   // Initialize Infisical client and authenticate
   const client = new InfisicalSDK({
@@ -73,8 +78,12 @@ export async function main(inputs: InfisicalActionInputs) {
     (path) => folderAppend + path
   );
 
-  // Create directories and write .env files for each folder path
-  await createFolders(folderPathsWithAppend);
+  // Create directories only if createFoldersFlag is enabled
+  if (createFoldersFlag) {
+    await createFolders(folderPathsWithAppend);
+  }
+
+  // Write .env files only to existing folders, with warnings for missing folders
   await writeEnvFiles(secretsByPath, folderAppend);
 
   const endTime = Date.now();
