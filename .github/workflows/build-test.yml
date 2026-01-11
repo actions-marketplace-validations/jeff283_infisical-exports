@@ -2,6 +2,10 @@ name: Build and Test Action
 
 on:
   push:
+  pull_request:
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -46,6 +50,7 @@ jobs:
   #       uses: actions/download-artifact@v4
   #       with:
   #         name: dist
+
   #         path: dist/
 
   #     - name: Infisical Exports Test Run
@@ -54,7 +59,7 @@ jobs:
   #       with:
   #         infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
   #         infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-  #         infisical-project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+  #         infisical-project-id: ${{ secrets.INFISICAL_PROJECT_ID }}
   #         infisical-env-slug: ${{ secrets.INFISICAL_ENV_SLUG }}
 
   #     - name: Get the output time
