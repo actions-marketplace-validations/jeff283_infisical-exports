@@ -1,10 +1,10 @@
 import * as core from "@actions/core";
+import { writeFile } from "node:fs/promises";
 import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
 
 /**
  * Writes .env files for each folder path containing its associated secrets
  * Only writes to folders that exist, logs warnings for missing folders
- * Uses Bun.write() for optimized file I/O performance
  * Returns an array of successfully written .env file paths with secret keys
  */
 export async function writeEnvFiles(
@@ -67,7 +67,7 @@ export async function writeEnvFiles(
       .join("\n");
 
     try {
-      await Bun.write(envFilePath, envContent);
+      await writeFile(envFilePath, envContent, "utf-8");
       const secretKeys = secrets.map((secret) => secret.key);
       core.info(`Wrote ${secrets.length} secrets to ${envFilePath}`);
       core.info(`  Secret keys: ${secretKeys.join(", ")}`);

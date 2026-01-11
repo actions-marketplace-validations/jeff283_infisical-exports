@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { InfisicalSDK } from "@infisical/sdk";
+import { writeFile } from "node:fs/promises";
 import { createFolders } from "@/utils/createFolders";
 import { writeEnvFiles } from "@/utils/writeEnvFiles";
 
@@ -110,7 +111,7 @@ export async function main(inputs: InfisicalActionInputs) {
   };
 
   try {
-    await Bun.write(locationsFile, JSON.stringify(locationsData, null, 2));
+    await writeFile(locationsFile, JSON.stringify(locationsData, null, 2), "utf-8");
     core.info(
       `Wrote ${writtenFiles.length} .env file locations to ${locationsFile}`
     );

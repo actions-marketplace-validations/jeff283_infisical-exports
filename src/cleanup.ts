@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { readdir } from "node:fs/promises";
+import { readdir, readFile, stat, unlink } from "node:fs/promises";
 
 interface EnvLocation {
   secretPath: string;
@@ -46,13 +46,14 @@ async function readLocationsFile(
   filePath: string
 ): Promise<LocationsData | null> {
   try {
-    const file = Bun.file(filePath);
-    if (!(await file.exists())) {
+    try {
+      await stat(filePath);
+    } catch {
       core.warning(`Locations file ${filePath} does not exist`);
       return null;
     }
-    const content = await file.json();
-    return content as LocationsData;
+    const content = await readFile(filePath, "utf-8");
+    return JSON.parse(content) as LocationsData;
   } catch (error) {
     core.error(`Error reading locations file ${filePath}: ${error}`);
     return null;
@@ -64,12 +65,13 @@ async function readLocationsFile(
  */
 async function deleteFile(filePath: string): Promise<boolean> {
   try {
-    const file = Bun.file(filePath);
-    if (await file.exists()) {
-      await file.delete();
-      return true;
+    try {
+      await stat(filePath);
+    } catch {
+      return false;
     }
-    return false;
+    await unlink(filePath);
+    return true;
   } catch (error) {
     core.error(`Error deleting file ${filePath}: ${error}`);
     return false;
