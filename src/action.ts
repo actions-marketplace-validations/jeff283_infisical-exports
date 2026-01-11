@@ -95,7 +95,7 @@ export async function main(inputs: InfisicalActionInputs) {
   const writtenFiles = await writeEnvFiles(secretsByPath, folderAppend);
 
   // Write locations of written .env files to JSON
-  const locationsFile = "env-locations.json";
+  const locationsFile = "env-locations-91373033.json";
   const locationsData = {
     totalFiles: writtenFiles.length,
     folderAppend: folderAppend || "current directory",
