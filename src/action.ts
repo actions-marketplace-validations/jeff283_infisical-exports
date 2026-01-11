@@ -1,6 +1,6 @@
 import { InfisicalSDK } from "@infisical/sdk";
-import { stat } from "node:fs/promises";
-import { mkdir } from "node:fs/promises";
+import { createFolders } from "@/utils/createFolders";
+import { writeEnvFiles } from "@/utils/writeEnvFiles";
 
 export interface InfisicalActionInputs {
   // INFISICAL_CLIENT_ID =
@@ -22,19 +22,20 @@ export interface InfisicalActionInputs {
 export async function main(inputs: InfisicalActionInputs) {
   const folderAppend = inputs.folderAppend || "mock-folder";
   const startTime = Date.now();
-  // Create a new Infisical client
+
+  // Initialize Infisical client and authenticate
   const client = new InfisicalSDK({
     siteUrl: inputs.infisicalDomain,
   });
 
-  //   Authenticate the client
   await client.auth().universalAuth.login({
     clientId: inputs.infisicalClientId,
     clientSecret: inputs.infisicalClientSecret,
   });
 
+  // Fetch all secrets recursively from the specified project and environment
   const config = {
-    environment: inputs.infisicalEnvSlug, // stg, dev, prod, or custom environment slugs
+    environment: inputs.infisicalEnvSlug,
     projectId: inputs.infisicalProjectId,
   };
 
@@ -42,43 +43,41 @@ export async function main(inputs: InfisicalActionInputs) {
     .secrets()
     .listSecrets({ ...config, recursive: true });
 
-  // Extract unique folder paths efficiently - O(n) time, O(k) space where k = unique paths
+  // Group secrets by their folder path for efficient processing
+  // Uses Map for O(1) lookups and Set to track unique paths
+  const secretsByPath = new Map<
+    string,
+    Array<{ key: string; value: string }>
+  >();
+  // Track unique folder paths for efficient directory creation
   const folderPaths = new Set<string>();
+
   for (const secret of allSecrets.secrets) {
-    if (secret.secretPath) {
-      folderPaths.add(secret.secretPath);
+    const path = secret.secretPath || "/";
+    folderPaths.add(path);
+
+    if (!secretsByPath.has(path)) {
+      secretsByPath.set(path, []);
     }
+
+    secretsByPath.get(path)!.push({
+      key: secret.secretKey,
+      value: secret.secretValue || "",
+    });
   }
+
   const folderPathsArray = Array.from(folderPaths);
+
+  // Prepend folder append prefix to all paths for directory creation
   const folderPathsWithAppend = folderPathsArray.map(
     (path) => folderAppend + path
   );
-  console.log("Folder Paths Count:", folderPathsWithAppend.length);
-  console.log("Folder Paths:", folderPathsWithAppend);
 
+  // Create directories and write .env files for each folder path
   await createFolders(folderPathsWithAppend);
+  await writeEnvFiles(secretsByPath, folderAppend);
 
   const endTime = Date.now();
   const duration = endTime - startTime;
   console.log(`Action Run Completed in ${duration}ms`);
-}
-
-// Check if the folder exists
-async function checkIfFolderExists(folderPath: string) {
-  return await stat(folderPath)
-    .then(() => true)
-    .catch(() => false);
-}
-
-async function createFolders(folderPaths: string[]) {
-  for (const folderPath of folderPaths) {
-    if (await checkIfFolderExists(folderPath)) {
-      console.log(`Folder ${folderPath} already exists`);
-    } else {
-      await mkdir(folderPath, { recursive: true }).catch((error) => {
-        console.error(`Error creating folder ${folderPath}: ${error}`);
-      });
-      console.log(`Folder ${folderPath} created`);
-    }
-  }
 }
