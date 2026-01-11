@@ -1,0 +1,31 @@
+name: Infisical Exports
+description: Exports Infisical secrets to environment variables
+author: Jeff Njoroge <jeff283>
+
+inputs:
+  infisical-client-id:
+    description: "The Client ID of the Infisical application"
+    required: true
+  infisical-client-secret:
+    description: "The Client Secret of the Infisical application"
+    required: true
+  infisical-project-slug:
+    description: "The Slug of the Infisical project"
+    required: true
+  infisical-domain:
+    description: The domain of the Infisical instance
+    required: false
+    default: "https://eu.infisical.com"
+  infisical-env-slug:
+    description: "The Slug of the Infisical environment"
+    required: false
+    default: "dev"
+
+outputs:
+  secrets:
+    description: "The secrets exported to the environment variables"
+
+runs:
+  using: node20
+  main: dist/index.js
+  post: dist/post.js
