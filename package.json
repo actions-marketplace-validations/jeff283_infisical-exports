@@ -1,7 +1,27 @@
 {
   "name": "infisical-exports",
-  "module": "index.ts",
+  "description": "Exports Infisical secrets to environment variables",
+  "version": "1.0.0",
+  "author": "jeff283",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jeff283/infisical-exports.git"
+  },
+  "homepage": "https://github.com/jeff283/infisical-exports",
+  "bugs": {
+    "url": "https://github.com/jeff283/infisical-exports/issues"
+  },
+  "keywords": [
+    "infisical",
+    "exports",
+    "environment variables"
+  ],
+  "main": "dist/index.js",
+  "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "build": "bun run build.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
