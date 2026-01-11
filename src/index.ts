@@ -3,19 +3,31 @@ import { main, type InfisicalActionInputs } from "@/action";
 
 async function run() {
   try {
-    // Inputs
-    // const infisicalClientId = core.getInput("infisical-client-id");
-    // const infisicalClientSecret = core.getInput("infisical-client-secret");
-    // const infisicalProjectId = core.getInput("infisical-project-id");
-    // const infisicalDomain = core.getInput("infisical-domain");
-    // const infisicalEnvSlug = core.getInput("infisical-env-slug");
+    // Get inputs from GitHub Actions
+    const infisicalClientId = core.getInput("infisical-client-id", {
+      required: true,
+    });
+    const infisicalClientSecret = core.getInput("infisical-client-secret", {
+      required: true,
+    });
+    const infisicalProjectId = core.getInput("infisical-project-id", {
+      required: true,
+    });
+    const infisicalDomain =
+      core.getInput("infisical-domain") || "https://eu.infisical.com";
+    const infisicalEnvSlug = core.getInput("infisical-env-slug") || "dev";
+    const folderAppend = core.getInput("folder-append") || "";
+    const createFoldersFlag =
+      core.getBooleanInput("create-folders-flag") || false;
 
     const inputs: InfisicalActionInputs = {
-      infisicalClientId: process.env.INFISICAL_CLIENT_ID || "",
-      infisicalClientSecret: process.env.INFISICAL_CLIENT_SECRET || "",
-      infisicalProjectId: process.env.INFISICAL_PROJECT_ID || "",
-      infisicalDomain: process.env.INFISICAL_DOMAIN || "",
-      infisicalEnvSlug: process.env.INFISICAL_ENV_SLUG || "",
+      infisicalClientId,
+      infisicalClientSecret,
+      infisicalProjectId,
+      infisicalDomain,
+      infisicalEnvSlug,
+      folderAppend: folderAppend || undefined,
+      createFoldersFlag: createFoldersFlag || undefined,
     };
     await main(inputs);
   } catch (error) {

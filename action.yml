@@ -22,8 +22,18 @@ inputs:
     default: "dev"
 
 outputs:
-  secrets:
-    description: "The secrets exported to the environment variables"
+  total-env-files:
+    description: "Total number of .env files created"
+  total-secrets:
+    description: "Total number of secrets written across all .env files"
+  env-file-paths:
+    description: "JSON array of all .env file paths that were created"
+  locations-file:
+    description: "Path to the locations JSON file"
+  duration-ms:
+    description: "Time taken to complete the action in milliseconds"
+  folder-append:
+    description: "The folder append prefix used (or 'current directory' if empty)"
 
 runs:
   using: node20

@@ -93,6 +93,13 @@ export async function main(inputs: InfisicalActionInputs) {
   // Write .env files only to existing folders, with warnings for missing folders
   const writtenFiles = await writeEnvFiles(secretsByPath, folderAppend);
 
+  // Calculate totals for outputs
+  const totalSecrets = writtenFiles.reduce(
+    (sum, file) => sum + file.secretCount,
+    0
+  );
+  const envFilePaths = writtenFiles.map((file) => file.envFilePath);
+
   // Write locations of written .env files to JSON
   const locationsFile = "env-locations-91373033.json";
   const locationsData = {
@@ -124,4 +131,12 @@ export async function main(inputs: InfisicalActionInputs) {
   const endTime = Date.now();
   const duration = endTime - startTime;
   core.info(`Action Run Completed in ${duration}ms`);
+
+  // Set action outputs
+  core.setOutput("total-env-files", writtenFiles.length.toString());
+  core.setOutput("total-secrets", totalSecrets.toString());
+  core.setOutput("env-file-paths", JSON.stringify(envFilePaths));
+  core.setOutput("locations-file", locationsFile);
+  core.setOutput("duration-ms", duration.toString());
+  core.setOutput("folder-append", folderAppend || "current directory");
 }
