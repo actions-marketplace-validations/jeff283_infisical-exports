@@ -2,10 +2,7 @@ name: Build and Test Action
 
 on:
   push:
-  pull_request:
-    branches:
-      - main
-      - master
+
   workflow_dispatch:
 
 jobs:
