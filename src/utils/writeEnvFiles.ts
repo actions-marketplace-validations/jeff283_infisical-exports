@@ -10,7 +10,9 @@ export async function writeEnvFiles(
   folderAppend: string
 ) {
   for (const [path, secrets] of secretsByPath) {
-    const folderPath = `${folderAppend}${path}`;
+    // Handle root path (/) to avoid double slashes
+    const normalizedPath = path === "/" ? "" : path;
+    const folderPath = `${folderAppend}${normalizedPath}`;
     const envFilePath = `${folderPath}/.env`;
 
     // Check if folder exists before writing

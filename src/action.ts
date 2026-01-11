@@ -74,8 +74,9 @@ export async function main(inputs: InfisicalActionInputs) {
   const folderPathsArray = Array.from(folderPaths);
 
   // Prepend folder append prefix to all paths for directory creation
-  const folderPathsWithAppend = folderPathsArray.map(
-    (path) => folderAppend + path
+  // Handle root path (/) to avoid double slashes
+  const folderPathsWithAppend = folderPathsArray.map((path) =>
+    path === "/" ? folderAppend : folderAppend + path
   );
 
   // Create directories only if createFoldersFlag is enabled
