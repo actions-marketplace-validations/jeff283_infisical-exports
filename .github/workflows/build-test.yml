@@ -17,7 +17,7 @@ jobs:
           bun-version: latest
 
       - name: Install Dependencies
-        run: bun install
+        run: bun ci
 
       - name: Build Code
         run: bun run build
