@@ -68,6 +68,7 @@ jobs:
           infisical-project-id: ${{ secrets.INFISICAL_PROJECT_ID }}
           infisical-domain: ${{ secrets.INFISICAL_DOMAIN || 'https://eu.infisical.com' }}
           infisical-env-slug: ${{ secrets.INFISICAL_ENV_SLUG || 'dev' }}
+          create-folders-flag: true
 
       - name: Display Action Results
         if: always()
