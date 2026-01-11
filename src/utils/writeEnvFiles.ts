@@ -10,19 +10,36 @@ export async function writeEnvFiles(
   folderAppend: string
 ) {
   for (const [path, secrets] of secretsByPath) {
-    // Handle root path (/) to avoid double slashes
-    const normalizedPath = path === "/" ? "" : path;
-    const folderPath = `${folderAppend}${normalizedPath}`;
-    const envFilePath = `${folderPath}/.env`;
+    // Build folder path and env file path, handling empty folderAppend and root path cases
+    let folderPath: string | null = null;
+    let envFilePath: string;
 
-    // Check if folder exists before writing
-    const folderExists = await checkIfFolderExists(folderPath);
+    if (folderAppend === "") {
+      if (path === "/") {
+        // Root path: write directly to .env in current directory (no folder needed)
+        envFilePath = ".env";
+        folderPath = null; // No folder to check/create
+      } else {
+        // Other paths: use relative paths
+        folderPath = path.slice(1); // Remove leading slash
+        envFilePath = `${folderPath}/.env`;
+      }
+    } else {
+      // When folderAppend is provided, prepend it and handle root path
+      const normalizedPath = path === "/" ? "" : path;
+      folderPath = `${folderAppend}${normalizedPath}`;
+      envFilePath = `${folderPath}/.env`;
+    }
 
-    if (!folderExists) {
-      console.warn(
-        `Warning: Folder ${folderPath} does not exist. Skipping ${secrets.length} secrets.`
-      );
-      continue;
+    // Check if folder exists before writing (skip check for root path when folderAppend is empty)
+    if (folderPath !== null) {
+      const folderExists = await checkIfFolderExists(folderPath);
+      if (!folderExists) {
+        console.warn(
+          `Warning: Folder ${folderPath} does not exist. Skipping ${secrets.length} secrets.`
+        );
+        continue;
+      }
     }
 
     // Format secrets as KEY=VALUE pairs, one per line

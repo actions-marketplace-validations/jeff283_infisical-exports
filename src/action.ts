@@ -25,8 +25,8 @@ export async function main(inputs: InfisicalActionInputs) {
   const startTime = Date.now();
 
   // Default values
-  const folderAppend = inputs.folderAppend || "mock-folder";
-  const createFoldersFlag = inputs.createFoldersFlag || false;
+  const folderAppend = inputs.folderAppend || "";
+  const createFoldersFlag = inputs.createFoldersFlag || true;
 
   // Initialize Infisical client and authenticate
   const client = new InfisicalSDK({
@@ -73,13 +73,21 @@ export async function main(inputs: InfisicalActionInputs) {
 
   const folderPathsArray = Array.from(folderPaths);
 
-  // Prepend folder append prefix to all paths for directory creation
-  // Handle root path (/) to avoid double slashes
-  const folderPathsWithAppend = folderPathsArray.map((path) =>
-    path === "/" ? folderAppend : folderAppend + path
-  );
+  // Build full folder paths, handling empty folderAppend and root path cases
+  const folderPathsWithAppend = folderPathsArray
+    .map((path) => {
+      if (folderAppend === "") {
+        // When folderAppend is empty, use secret paths directly
+        // Root path is skipped (writes to current dir), others become relative paths
+        return path === "/" ? null : path.slice(1); // Remove leading slash for relative paths
+      }
+      // When folderAppend is provided, prepend it and handle root path
+      return path === "/" ? folderAppend : folderAppend + path;
+    })
+    .filter((path): path is string => path !== null); // Remove null entries (root path when folderAppend is empty)
 
   // Create directories only if createFoldersFlag is enabled
+  // Skip root path when folderAppend is empty (writes directly to current directory)
   if (createFoldersFlag) {
     await createFolders(folderPathsWithAppend);
   }
