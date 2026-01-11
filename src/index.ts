@@ -6,14 +6,13 @@ async function run() {
     // Inputs
     // const infisicalClientId = core.getInput("infisical-client-id");
     // const infisicalClientSecret = core.getInput("infisical-client-secret");
-    // const infisicalProjectSlug = core.getInput("infisical-project-slug");
+    // const infisicalProjectId = core.getInput("infisical-project-id");
     // const infisicalDomain = core.getInput("infisical-domain");
     // const infisicalEnvSlug = core.getInput("infisical-env-slug");
 
     const inputs: InfisicalActionInputs = {
       infisicalClientId: process.env.INFISICAL_CLIENT_ID || "",
       infisicalClientSecret: process.env.INFISICAL_CLIENT_SECRET || "",
-      infisicalProjectSlug: process.env.INFISICAL_PROJECT_SLUG || "",
       infisicalProjectId: process.env.INFISICAL_PROJECT_ID || "",
       infisicalDomain: process.env.INFISICAL_DOMAIN || "",
       infisicalEnvSlug: process.env.INFISICAL_ENV_SLUG || "",

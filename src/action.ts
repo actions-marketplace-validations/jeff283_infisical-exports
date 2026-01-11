@@ -8,8 +8,6 @@ export interface InfisicalActionInputs {
   infisicalClientId: string;
   // INFISICAL_CLIENT_SECRET =
   infisicalClientSecret: string;
-  // INFISICAL_PROJECT_SLUG =
-  infisicalProjectSlug: string;
   // INFISICAL_DOMAIN =
   infisicalDomain: string;
   // INFISICAL_ENV_SLUG =

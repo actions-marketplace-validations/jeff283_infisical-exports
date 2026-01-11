@@ -9,8 +9,8 @@ inputs:
   infisical-client-secret:
     description: "The Client Secret of the Infisical application"
     required: true
-  infisical-project-slug:
-    description: "The Slug of the Infisical project"
+  infisical-project-id:
+    description: "The ID of the Infisical project"
     required: true
   infisical-domain:
     description: The domain of the Infisical instance

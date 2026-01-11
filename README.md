@@ -15,7 +15,7 @@ To use this action in your workflow, reference it in your workflow file:
   with:
     infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
     infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-    infisical-project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+    infisical-project-id: ${{ secrets.INFISICAL_PROJECT_ID }}
 ```
 
 ## Development
@@ -44,7 +44,7 @@ This will compile the TypeScript source code to JavaScript in the `dist/` direct
 | ------------------------- | ---------------------------------------------- | -------- | -------------------------- |
 | `infisical-client-id`     | The Client ID of the Infisical application     | Yes      | -                          |
 | `infisical-client-secret` | The Client Secret of the Infisical application | Yes      | -                          |
-| `infisical-project-slug`  | The Slug of the Infisical project              | Yes      | -                          |
+| `infisical-project-id`   | The ID of the Infisical project                | Yes      | -                          |
 | `infisical-domain`        | The domain of the Infisical instance           | No       | `https://eu.infisical.com` |
 | `infisical-env-slug`      | The Slug of the Infisical environment          | No       | `dev`                      |
 
@@ -75,7 +75,7 @@ jobs:
         with:
           infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
           infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-          infisical-project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+          infisical-project-id: ${{ secrets.INFISICAL_PROJECT_ID }}
           infisical-env-slug: production
 
       - name: Use secrets
