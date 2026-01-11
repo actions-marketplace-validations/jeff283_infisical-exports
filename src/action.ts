@@ -108,6 +108,16 @@ export async function main(inputs: InfisicalActionInputs) {
     console.log(
       `Wrote ${writtenFiles.length} .env file locations to ${locationsFile}`
     );
+    console.log("\nSummary of written .env files:");
+    for (const location of writtenFiles) {
+      console.log(`  ${location.envFilePath}:`);
+      console.log(`    Secret Path: ${location.secretPath}`);
+      console.log(
+        `    Secret Keys (${location.secretCount}): ${location.secretKeys.join(
+          ", "
+        )}`
+      );
+    }
   } catch (error) {
     console.error(`Error writing locations file ${locationsFile}:`, error);
   }
