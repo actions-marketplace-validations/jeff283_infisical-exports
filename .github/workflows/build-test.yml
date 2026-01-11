@@ -1,0 +1,56 @@
+name: Build and Test Action
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Build Code
+        run: bun run build
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+          overwrite: true
+
+  # test:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download dist artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist/
+
+  #     - name: Infisical Exports Test Run
+  #       id: infisical-exports
+  #       uses: ./
+  #       with:
+  #         infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+  #         infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+  #         infisical-project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+  #         infisical-env-slug: ${{ secrets.INFISICAL_ENV_SLUG }}
+
+  #     - name: Get the output time
+  #       run: echo "The time was ${{ steps.infisical-exports.outputs.secrets }}"
