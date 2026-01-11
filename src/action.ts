@@ -92,7 +92,25 @@ export async function main(inputs: InfisicalActionInputs) {
   }
 
   // Write .env files only to existing folders, with warnings for missing folders
-  await writeEnvFiles(secretsByPath, folderAppend);
+  const writtenFiles = await writeEnvFiles(secretsByPath, folderAppend);
+
+  // Write locations of written .env files to JSON
+  const locationsFile = "env-locations.json";
+  const locationsData = {
+    totalFiles: writtenFiles.length,
+    folderAppend: folderAppend || "current directory",
+    writtenAt: new Date().toISOString(),
+    locations: writtenFiles,
+  };
+
+  try {
+    await Bun.write(locationsFile, JSON.stringify(locationsData, null, 2));
+    console.log(
+      `Wrote ${writtenFiles.length} .env file locations to ${locationsFile}`
+    );
+  } catch (error) {
+    console.error(`Error writing locations file ${locationsFile}:`, error);
+  }
 
   const endTime = Date.now();
   const duration = endTime - startTime;

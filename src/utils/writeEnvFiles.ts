@@ -4,11 +4,20 @@ import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
  * Writes .env files for each folder path containing its associated secrets
  * Only writes to folders that exist, logs warnings for missing folders
  * Uses Bun.write() for optimized file I/O performance
+ * Returns an array of successfully written .env file paths
  */
 export async function writeEnvFiles(
   secretsByPath: Map<string, Array<{ key: string; value: string }>>,
   folderAppend: string
-) {
+): Promise<
+  Array<{ secretPath: string; envFilePath: string; secretCount: number }>
+> {
+  const writtenFiles: Array<{
+    secretPath: string;
+    envFilePath: string;
+    secretCount: number;
+  }> = [];
+
   for (const [path, secrets] of secretsByPath) {
     // Build folder path and env file path, handling empty folderAppend and root path cases
     let folderPath: string | null = null;
@@ -53,10 +62,17 @@ export async function writeEnvFiles(
     try {
       await Bun.write(envFilePath, envContent);
       console.log(`Wrote ${secrets.length} secrets to ${envFilePath}`);
+      writtenFiles.push({
+        secretPath: path,
+        envFilePath: envFilePath,
+        secretCount: secrets.length,
+      });
     } catch (error) {
       console.error(`Error writing .env file ${envFilePath}:`, error);
     }
   }
+
+  return writtenFiles;
 }
 
 /**
