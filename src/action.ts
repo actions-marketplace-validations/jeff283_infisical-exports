@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { InfisicalSDK } from "@infisical/sdk";
 import { createFolders } from "@/utils/createFolders";
 import { writeEnvFiles } from "@/utils/writeEnvFiles";
@@ -105,24 +106,24 @@ export async function main(inputs: InfisicalActionInputs) {
 
   try {
     await Bun.write(locationsFile, JSON.stringify(locationsData, null, 2));
-    console.log(
+    core.info(
       `Wrote ${writtenFiles.length} .env file locations to ${locationsFile}`
     );
-    console.log("\nSummary of written .env files:");
+    core.info("\nSummary of written .env files:");
     for (const location of writtenFiles) {
-      console.log(`  ${location.envFilePath}:`);
-      console.log(`    Secret Path: ${location.secretPath}`);
-      console.log(
+      core.info(`  ${location.envFilePath}:`);
+      core.info(`    Secret Path: ${location.secretPath}`);
+      core.info(
         `    Secret Keys (${location.secretCount}): ${location.secretKeys.join(
           ", "
         )}`
       );
     }
   } catch (error) {
-    console.error(`Error writing locations file ${locationsFile}:`, error);
+    core.error(`Error writing locations file ${locationsFile}: ${error}`);
   }
 
   const endTime = Date.now();
   const duration = endTime - startTime;
-  console.log(`Action Run Completed in ${duration}ms`);
+  core.info(`Action Run Completed in ${duration}ms`);
 }

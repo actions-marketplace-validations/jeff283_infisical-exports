@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
 import { mkdir } from "node:fs/promises";
 
@@ -8,12 +9,12 @@ import { mkdir } from "node:fs/promises";
 export async function createFolders(folderPaths: string[]) {
   for (const folderPath of folderPaths) {
     if (await checkIfFolderExists(folderPath)) {
-      console.log(`Folder ${folderPath} already exists`);
+      core.info(`Folder ${folderPath} already exists`);
     } else {
       await mkdir(folderPath, { recursive: true }).catch((error) => {
-        console.error(`Error creating folder ${folderPath}: ${error}`);
+        core.error(`Error creating folder ${folderPath}: ${error}`);
       });
-      console.log(`Folder ${folderPath} created`);
+      core.info(`Folder ${folderPath} created`);
     }
   }
 }

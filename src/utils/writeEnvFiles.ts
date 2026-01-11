@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { checkIfFolderExists } from "@/utils/checkIfFolderExists";
 
 /**
@@ -50,8 +51,8 @@ export async function writeEnvFiles(
     if (folderPath !== null) {
       const folderExists = await checkIfFolderExists(folderPath);
       if (!folderExists) {
-        console.warn(
-          `Warning: Folder ${folderPath} does not exist. Skipping ${secrets.length} secrets.`
+        core.warning(
+          `Folder ${folderPath} does not exist. Skipping ${secrets.length} secrets.`
         );
         continue;
       }
@@ -68,8 +69,8 @@ export async function writeEnvFiles(
     try {
       await Bun.write(envFilePath, envContent);
       const secretKeys = secrets.map((secret) => secret.key);
-      console.log(`Wrote ${secrets.length} secrets to ${envFilePath}`);
-      console.log(`  Secret keys: ${secretKeys.join(", ")}`);
+      core.info(`Wrote ${secrets.length} secrets to ${envFilePath}`);
+      core.info(`  Secret keys: ${secretKeys.join(", ")}`);
       writtenFiles.push({
         secretPath: path,
         envFilePath: envFilePath,
@@ -77,7 +78,7 @@ export async function writeEnvFiles(
         secretKeys: secretKeys,
       });
     } catch (error) {
-      console.error(`Error writing .env file ${envFilePath}:`, error);
+      core.error(`Error writing .env file ${envFilePath}: ${error}`);
     }
   }
 
