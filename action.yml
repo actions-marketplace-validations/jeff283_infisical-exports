@@ -9,8 +9,8 @@ inputs:
   infisical-client-secret:
     description: "The Client Secret of the Infisical application"
     required: true
-  infisical-project-slug:
-    description: "The Slug of the Infisical project"
+  infisical-project-id:
+    description: "The ID of the Infisical project"
     required: true
   infisical-domain:
     description: The domain of the Infisical instance
@@ -20,12 +20,30 @@ inputs:
     description: "The Slug of the Infisical environment"
     required: false
     default: "dev"
+  folder-append:
+    description: "Optional prefix to prepend to folder paths (empty string uses current directory)"
+    required: false
+    default: ""
+  create-folders-flag:
+    description: "Whether to create folders if they don't exist (true/false)"
+    required: false
+    default: "false"
 
 outputs:
-  secrets:
-    description: "The secrets exported to the environment variables"
+  total-env-files:
+    description: "Total number of .env files created"
+  total-secrets:
+    description: "Total number of secrets written across all .env files"
+  env-file-paths:
+    description: "JSON array of all .env file paths that were created"
+  locations-file:
+    description: "Path to the locations JSON file"
+  duration-ms:
+    description: "Time taken to complete the action in milliseconds"
+  folder-append:
+    description: "The folder append prefix used (or 'current directory' if empty)"
 
 runs:
   using: node20
   main: dist/index.js
-  post: dist/post.js
+  post: dist/cleanup.js

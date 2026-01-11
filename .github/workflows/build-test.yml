@@ -2,11 +2,17 @@ name: Build and Test Action
 
 on:
   push:
+
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-build
+      cancel-in-progress: true
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -30,27 +36,67 @@ jobs:
           retention-days: 1
           overwrite: true
 
-  # test:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  test:
+    needs: build
+    runs-on: ubuntu-latest
 
-  #     - name: Download dist artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: dist
-  #         path: dist/
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-test
+      cancel-in-progress: true
 
-  #     - name: Infisical Exports Test Run
-  #       id: infisical-exports
-  #       uses: ./
-  #       with:
-  #         infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
-  #         infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-  #         infisical-project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
-  #         infisical-env-slug: ${{ secrets.INFISICAL_ENV_SLUG }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Get the output time
-  #       run: echo "The time was ${{ steps.infisical-exports.outputs.secrets }}"
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Infisical Exports Test Run
+        id: infisical-exports
+        uses: ./
+        with:
+          infisical-client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          infisical-client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          infisical-project-id: ${{ secrets.INFISICAL_PROJECT_ID }}
+          infisical-domain: ${{ secrets.INFISICAL_DOMAIN || 'https://eu.infisical.com' }}
+          infisical-env-slug: ${{ secrets.INFISICAL_ENV_SLUG || 'dev' }}
+          create-folders-flag: true
+
+      - name: Display Action Results
+        if: always()
+        run: |
+          echo "=== Action Test Results ==="
+          echo "✓ Action completed successfully"
+          echo ""
+          echo "Results:"
+          echo "  Total .env files created: ${{ steps.infisical-exports.outputs.total-env-files }}"
+          echo "  Total secrets written: ${{ steps.infisical-exports.outputs.total-secrets }}"
+          echo "  Duration: ${{ steps.infisical-exports.outputs.duration-ms }}ms"
+          echo "  Folder append: ${{ steps.infisical-exports.outputs.folder-append }}"
+          echo "  Locations file: ${{ steps.infisical-exports.outputs.locations-file }}"
+          echo ""
+          echo "Created .env files (JSON):"
+          echo '${{ steps.infisical-exports.outputs.env-file-paths }}'
+
+      - name: Verify Action Outputs
+        if: always()
+        run: |
+          echo "=== Verification ==="
+          if [ "${{ steps.infisical-exports.outputs.total-env-files }}" -gt "0" ]; then
+            echo "✓ Action created ${{ steps.infisical-exports.outputs.total-env-files }} .env file(s)"
+          else
+            echo "⚠ No .env files were created"
+          fi
+
+          if [ "${{ steps.infisical-exports.outputs.total-secrets }}" -gt "0" ]; then
+            echo "✓ Action wrote ${{ steps.infisical-exports.outputs.total-secrets }} secret(s)"
+          else
+            echo "⚠ No secrets were written"
+          fi
+
+          echo ""
+          echo "Note: The post-action cleanup automatically removes all created files."
+          echo "Check the cleanup logs above to verify files were deleted."
